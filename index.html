@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P-SPA • Bảng Kế Hoạch Chi Phí & Điểm Hòa Vốn (100Tr)</title>
+  <meta name="description" content="Dashboard trực quan hóa kế hoạch tài chính, chi phí mở Spa và mô phỏng điểm hòa vốn theo từng tháng.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js Offline Bundle -->
+  <script src="chart.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/>
+            <path d="M12 6a6 6 0 0 0-6 6c0 3.3 2.7 6 6 6s6-2.7 6-6a6 6 0 0 0-6-6z"/>
+            <path d="M12 9v6M9 12h6"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>P-SPA FINANCIAL DASHBOARD</h1>
+          <p>Kế Hoạch Dự Toán Ngân Sách Khởi Nghiệp 100.000.000 VNĐ</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="btn btn-outline" title="Chuyển đổi giao diện Sáng / Tối">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span class="mode-text">Giao diện</span>
+        </button>
+
+        <a href="#simulatorSection" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Mô Phỏng Hòa Vốn</span>
+        </a>
+
+        <button onclick="window.print()" class="btn btn-secondary" title="In hoặc lưu file PDF">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>In Báo Cáo</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="dashboard-wrapper">
+
+    <!-- Overview Banner / Alert -->
+    <div class="alert-banner">
+      <div class="alert-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="alert-content">
+        <h3>Lưu ý dòng tiền khởi điểm: Chi phí Tháng 1 đạt 119.200.000 VNĐ</h3>
+        <p>Khoản chi ban đầu vượt ngân sách 100 triệu (~19,2 triệu). Để an toàn, cần tính toán kỹ thời gian hòa vốn và phân tách rõ giữa chi phí sinh hoạt cá nhân với chi phí vận hành spa.</p>
+      </div>
+      <div class="alert-tag">Cảnh báo tài chính</div>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <section class="kpi-grid">
+      <!-- Card 1 -->
+      <div class="kpi-card card-highlight">
+        <div class="kpi-header">
+          <span class="kpi-title">Vốn Đầu Tư & Tháng 1</span>
+          <span class="badge badge-warning">Đỉnh điểm chi tiêu</span>
+        </div>
+        <div class="kpi-value text-accent" id="kpiMonth1">119.200.000 <span class="currency">đ</span></div>
+        <div class="kpi-breakdown">
+          <span>• Đầu tư thiết bị: <strong>92.000.000 đ</strong></span>
+          <span>• Cố định T1 (gồm 2 th cọc): <strong>27.200.000 đ</strong></span>
+        </div>
+        <div class="kpi-footer">
+          <span class="sub-label">Điểm hòa vốn T1: <strong>4.110.345 đ/ngày</strong></span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Vận Hành Tháng 2</span>
+          <span class="badge badge-success">Tháng nhẹ nhất</span>
+        </div>
+        <div class="kpi-value" id="kpiMonth2">13.200.000 <span class="currency">đ</span></div>
+        <div class="kpi-breakdown">
+          <span>• Mặt bằng đã trả trước ở T1: <strong>0 đ</strong></span>
+          <span>• Chi phí điện nước + cá nhân: <strong>13.200.000 đ</strong></span>
+        </div>
+        <div class="kpi-footer">
+          <span class="sub-label">Điểm hòa vốn T2: <strong>455.172 đ/ngày</strong></span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Chi Phí Ổn Định (T3 - T5)</span>
+          <span class="badge badge-info">Vận hành đều</span>
+        </div>
+        <div class="kpi-value" id="kpiMonth3">20.200.000 <span class="currency">đ/tháng</span></div>
+        <div class="kpi-breakdown">
+          <span>• Chi phí thực Spa: <strong>8.500.000 đ</strong></span>
+          <span>• Chi phí cá nhân (trọ, ăn, nợ): <strong>11.700.000 đ</strong></span>
+        </div>
+        <div class="kpi-footer">
+          <span class="sub-label">Điểm hòa vốn: <strong>696.552 đ/ngày</strong> (~3-4 khách)</span>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-title">Chi Phí Sau Cưới (T6, T7)</span>
+          <span class="badge badge-primary">Tiết kiệm 4tr/tháng</span>
+        </div>
+        <div class="kpi-value text-success" id="kpiPostWedding">16.200.000 <span class="currency">đ/tháng</span></div>
+        <div class="kpi-breakdown">
+          <span>• Đã cắt giảm tiền trọ: <strong>-4.000.000 đ</strong></span>
+          <span>• Giảm áp lực điểm hòa vốn: <strong>-137.931 đ/ngày</strong></span>
+        </div>
+        <div class="kpi-footer">
+          <span class="sub-label">Điểm hòa vốn: <strong>558.621 đ/ngày</strong> (~2-3 khách)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Charts Section (Exactly visualizes Section A & Section B in Excel) -->
+    <section class="charts-section">
+      <!-- Chart Left: Monthly Total & BEP Trend (Section B in Excel) -->
+      <div class="chart-panel chart-panel-large">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">
+              <span class="section-tag">B</span> Tổng Chi Theo Tháng & Điểm Hoàn Vốn / Ngày
+            </h2>
+            <p class="panel-subtitle">So sánh tổng chi tiêu và ngưỡng doanh thu tối thiểu mỗi ngày (chia 29 ngày)</p>
+          </div>
+          <div class="chart-legend-custom">
+            <span class="legend-item"><span class="dot dot-fixed"></span> Chi phí cố định</span>
+            <span class="legend-item"><span class="dot dot-invest"></span> Chi phí đầu tư</span>
+            <span class="legend-item"><span class="dot dot-bep"></span> Điểm hòa vốn/ngày</span>
+          </div>
+        </div>
+
+        <div class="chart-canvas-container">
+          <canvas id="monthlyTotalChart"></canvas>
+        </div>
+
+        <div class="chart-stats-bar">
+          <div class="stat-pill">
+            <span class="stat-name">Tháng 1:</span>
+            <span class="stat-num">119.2 Tr (4.11 Tr/ngày)</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-name">Tháng 2:</span>
+            <span class="stat-num">13.2 Tr (455K/ngày)</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-name">Tháng 3-5:</span>
+            <span class="stat-num">20.2 Tr (697K/ngày)</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-name">Sau cưới:</span>
+            <span class="stat-num">16.2 Tr (559K/ngày)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart Right: Cost Structure Pie/Doughnut (Section A in Excel) -->
+      <div class="chart-panel chart-panel-small">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">
+              <span class="section-tag">A</span> Cơ Cấu Tỷ Lệ Chi Tiêu
+            </h2>
+            <p class="panel-subtitle">Xem phân bổ ngân sách các hạng mục</p>
+          </div>
+          
+          <!-- Month Selector for Pie Chart -->
+          <div class="month-selector">
+            <label for="pieMonthSelect" class="sr-only">Chọn tháng</label>
+            <select id="pieMonthSelect" class="form-select">
+              <option value="Tháng 3" selected>Tháng 3 (Mặc định)</option>
+              <option value="Tháng 1">Tháng 1 (Gồm đầu tư)</option>
+              <option value="Tháng 2">Tháng 2</option>
+              <option value="Tháng 4">Tháng 4</option>
+              <option value="Tháng 5">Tháng 5</option>
+              <option value="Sau cưới th1">Sau cưới (Tháng 6, 7)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="doughnut-container">
+          <canvas id="breakdownPieChart"></canvas>
+          <div class="doughnut-center-info">
+            <span class="center-month" id="centerMonthName">Tháng 3</span>
+            <span class="center-amount" id="centerMonthTotal">20.200.000 đ</span>
+          </div>
+        </div>
+
+        <div class="pie-breakdown-list" id="pieBreakdownList">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategy Breakdown: Spa Operating Cost vs Personal Living Cost -->
+    <section class="analysis-card">
+      <div class="analysis-header">
+        <div class="analysis-title-group">
+          <div class="badge badge-primary">Góc nhìn chiến lược</div>
+          <h2>Bóc Tách: Chi Phí Thuần Vận Hành Spa vs Chi Phí Sinh Hoạt Cá Nhân</h2>
+          <p>Hiểu đúng để không bị áp lực: Doanh thu bao nhiêu là để nuôi tiệm, bao nhiêu là để nuôi cuộc sống cá nhân?</p>
+        </div>
+      </div>
+
+      <div class="split-comparison-grid">
+        <div class="split-col split-spa">
+          <div class="split-col-header">
+            <div class="split-icon spa-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <h3>Chi Phí Cố Định Tiệm Spa</h3>
+              <div class="split-amount">8.500.000 <span class="currency">đ/tháng</span></div>
+              <span class="split-percent">Chiếm ~42.1% tổng chi</span>
+            </div>
+          </div>
+          <ul class="split-list">
+            <li>
+              <span>Mặt bằng kinh doanh</span>
+              <strong>7.000.000 đ</strong>
+            </li>
+            <li>
+              <span>Điện nước, wifi, rác</span>
+              <strong>1.000.000 đ</strong>
+            </li>
+            <li>
+              <span>Khấu hao máy móc & thiết bị</span>
+              <strong>500.000 đ</strong>
+            </li>
+          </ul>
+          <div class="split-col-footer">
+            <span>Ngưỡng sống sót của Tiệm: <strong>~293.000 đ/ngày</strong> (chỉ cần 1-2 khách/ngày là tiệm tự nuôi được mặt bằng & điện nước!)</span>
+          </div>
+        </div>
+
+        <div class="split-col split-personal">
+          <div class="split-col-header">
+            <div class="split-icon personal-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <h3>Chi Phí Sinh Hoạt Cá Nhân</h3>
+              <div class="split-amount">11.700.000 <span class="currency">đ/tháng</span></div>
+              <span class="split-percent">Chiếm ~57.9% tổng chi</span>
+            </div>
+          </div>
+          <ul class="split-list">
+            <li>
+              <span>Tiền trọ cá nhân (T1 - T5)</span>
+              <strong>4.000.000 đ</strong>
+            </li>
+            <li>
+              <span>Ăn uống, chi tiêu sinh hoạt</span>
+              <strong>5.000.000 đ</strong>
+            </li>
+            <li>
+              <span>Trả nợ vay ngân hàng/người thân</span>
+              <strong>2.700.000 đ</strong>
+            </li>
+          </ul>
+          <div class="split-col-footer">
+            <span>Sau khi cưới (Tháng 6+): Cắt giảm tiền trọ còn <strong>7.700.000 đ/tháng</strong>, giảm tải tài chính rất lớn.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comprehensive Financial Data Table (Direct from Excel image) -->
+    <section class="table-section">
+      <div class="table-header-bar">
+        <div>
+          <h2 class="panel-title">Bảng Chi Tiết Dự Toán Ngân Sách (Theo File Excel Gốc)</h2>
+          <p class="panel-subtitle">Dữ liệu đối chiếu đầy đủ các danh mục chi phí qua các giai đoạn</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="table-controls">
+          <div class="filter-group">
+            <button class="filter-btn active" data-filter="all">Tất Cả</button>
+            <button class="filter-btn" data-filter="fixed">Cố Định Hàng Tháng</button>
+            <button class="filter-btn" data-filter="investment">Đầu Tư Ban Đầu</button>
+          </div>
+
+          <div class="search-input-wrapper">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="tableSearch" placeholder="Tìm hạng mục chi..." autocomplete="off">
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="financial-table" id="expenseTable">
+          <thead>
+            <tr>
+              <th class="col-type">Nhóm Chi Phí</th>
+              <th class="col-item">Hạng Mục Chi</th>
+              <th class="col-money">Tháng 1</th>
+              <th class="col-money">Tháng 2</th>
+              <th class="col-money highlight-col">Tháng 3</th>
+              <th class="col-money">Tháng 4</th>
+              <th class="col-money">Tháng 5</th>
+              <th class="col-money">Sau Cưới Th1</th>
+              <th class="col-money">Sau Cưới Th2</th>
+              <th class="col-note">Ghi Chú</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Group 1: Chi phí cố định hàng tháng -->
+            <tr class="row-group-header" data-category="fixed">
+              <td colspan="10">📌 NHÓM 1: CHI PHÍ CỐ ĐỊNH HẰNG THÁNG</td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định</td>
+              <td class="cell-item font-semibold">Mặt bằng</td>
+              <td class="cell-money">14.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money highlight-cell">7.000.000</td>
+              <td class="cell-money">7.000.000</td>
+              <td class="cell-money">7.000.000</td>
+              <td class="cell-money">7.000.000</td>
+              <td class="cell-money">7.000.000</td>
+              <td class="cell-note"><span class="note-pill">2 tháng đầu (T1 đóng cọc)</span></td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định</td>
+              <td class="cell-item font-semibold">Điện nước</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-money highlight-cell">1.000.000</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-money">1.000.000</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định (Cá nhân)</td>
+              <td class="cell-item font-semibold">Tiền trọ</td>
+              <td class="cell-money">4.000.000</td>
+              <td class="cell-money">4.000.000</td>
+              <td class="cell-money highlight-cell">4.000.000</td>
+              <td class="cell-money">4.000.000</td>
+              <td class="cell-money">4.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note"><span class="note-pill note-success">Sau cưới ở chung</span></td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định (Cá nhân)</td>
+              <td class="cell-item font-semibold">Nợ vay</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-money highlight-cell">2.700.000</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-money">2.700.000</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định (Cá nhân)</td>
+              <td class="cell-item font-semibold">Ăn uống sinh hoạt</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-money highlight-cell">5.000.000</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-money">5.000.000</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="fixed">
+              <td class="cell-group">Cố định</td>
+              <td class="cell-item font-semibold">Khấu hao thiết bị</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-money highlight-cell">500.000</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-money">500.000</td>
+              <td class="cell-note">-</td>
+            </tr>
+
+            <!-- Group 2: Chi phí đầu tư ban đầu -->
+            <tr class="row-group-header" data-category="investment">
+              <td colspan="10">🚀 NHÓM 2: CHI PHÍ ĐẦU TƯ (CHỈ PHÁT SINH THÁNG ĐẦU)</td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Sang mặt bằng</td>
+              <td class="cell-money text-accent">40.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note"><span class="note-pill note-danger">Chiếm 40% vốn</span></td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Học liệu trình + bằng</td>
+              <td class="cell-money text-accent">20.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Sản phẩm</td>
+              <td class="cell-money text-accent">15.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note"><span class="note-pill">Ước tính ban đầu</span></td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Đồng phục</td>
+              <td class="cell-money text-accent">2.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Máy móc dụng cụ</td>
+              <td class="cell-money text-accent">5.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note">-</td>
+            </tr>
+            <tr data-category="investment">
+              <td class="cell-group">Đầu tư ban đầu</td>
+              <td class="cell-item font-semibold">Sửa tiệm + loa</td>
+              <td class="cell-money text-accent">10.000.000</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted highlight-cell">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-money text-muted">-</td>
+              <td class="cell-note">-</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <!-- Row Total Cost -->
+            <tr class="total-row">
+              <td colspan="2" class="total-label">TỔNG CHI THEO THÁNG (VNĐ)</td>
+              <td class="total-val text-accent">119.200.000</td>
+              <td class="total-val">13.200.000</td>
+              <td class="total-val highlight-total">20.200.000</td>
+              <td class="total-val">20.200.000</td>
+              <td class="total-val">20.200.000</td>
+              <td class="total-val text-success">16.200.000</td>
+              <td class="total-val text-success">16.200.000</td>
+              <td class="cell-note">Công thức: =SUM()</td>
+            </tr>
+            <!-- Row BEP per day -->
+            <tr class="bep-row">
+              <td colspan="2" class="bep-label">ĐIỂM HOÀN VỐN / NGÀY (29 NGÀY)</td>
+              <td class="bep-val text-accent">4.110.345</td>
+              <td class="bep-val">455.172</td>
+              <td class="bep-val highlight-bep">696.552</td>
+              <td class="bep-val">696.552</td>
+              <td class="bep-val">696.552</td>
+              <td class="bep-val text-success">558.621</td>
+              <td class="bep-val text-success">558.621</td>
+              <td class="cell-note">Tổng chi / 29 ngày</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- Interactive Break-Even Simulator Section -->
+    <section class="simulator-card" id="simulatorSection">
+      <div class="simulator-header">
+        <div class="sim-title-group">
+          <div class="badge badge-accent">Công cụ thực chiến</div>
+          <h2>Máy Tính Mô Phỏng Điểm Hòa Vốn Thực Tế Cho Chủ Spa</h2>
+          <p>Tự nhập giá dịch vụ & số ngày làm việc để biết chính xác bạn cần đón bao nhiêu khách mỗi ngày</p>
+        </div>
+      </div>
+
+      <div class="sim-grid">
+        <!-- Input Controls -->
+        <div class="sim-controls">
+          <div class="control-group">
+            <label for="simMonth">Giai đoạn tính toán:</label>
+            <select id="simMonth" class="form-select">
+              <option value="stable" selected>Vận hành ổn định (Tháng 3 - Tháng 5: 20.2 Tr/tháng)</option>
+              <option value="postWedding">Giai đoạn Sau cưới (Tháng 6+: 16.2 Tr/tháng)</option>
+              <option value="month2">Tháng 2 (13.2 Tr/tháng)</option>
+              <option value="month1">Tháng 1 khởi nghiệp (119.2 Tr)</option>
+              <option value="pureSpa">Chỉ tính chi phí thuần Spa (8.5 Tr/tháng)</option>
+            </select>
+          </div>
+
+          <div class="control-row">
+            <div class="control-group">
+              <label for="avgTicket">Giá dịch vụ trung bình (Bill/khách):</label>
+              <div class="input-with-unit">
+                <input type="number" id="avgTicket" value="200000" step="10000" min="50000">
+                <span class="unit">đ</span>
+              </div>
+              <small class="hint">Ví dụ: Chăm sóc da mụn, gội đầu dưỡng sinh (200.000 đ)</small>
+            </div>
+
+            <div class="control-group">
+              <label for="costPerTicket">Mỹ phẩm tiêu hao / khách:</label>
+              <div class="input-with-unit">
+                <input type="number" id="costPerTicket" value="30000" step="5000" min="0">
+                <span class="unit">đ</span>
+              </div>
+              <small class="hint">Chi phí kem, bông tẩy trang, serum, tinh dầu...</small>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <div class="control-group">
+              <label for="workDays">Số ngày làm việc trong tháng:</label>
+              <div class="input-with-unit">
+                <input type="number" id="workDays" value="29" min="20" max="31">
+                <span class="unit">ngày</span>
+              </div>
+              <small class="hint">Mặc định file Excel tính 29 ngày (hoặc 26 ngày nếu nghỉ CN)</small>
+            </div>
+
+            <div class="control-group">
+              <label for="grossMarginPreview">Lãi gộp trên 1 lượt khách:</label>
+              <div class="display-box" id="grossMarginPreview">170.000 đ/khách</div>
+              <small class="hint">(Giá dịch vụ - Tiêu hao)</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Result Output -->
+        <div class="sim-results">
+          <div class="result-box primary-result">
+            <span class="result-label">Số Khách Cần Phục Vụ / Ngày:</span>
+            <div class="result-value" id="resCustomersPerDay">4.1 <span class="res-sub">khách/ngày</span></div>
+            <p class="result-desc" id="resCustomerDesc">Chỉ cần phục vụ đều đặn <strong>4 khách</strong> mỗi ngày là bạn đã đạt điểm hòa vốn!</p>
+          </div>
+
+          <div class="result-stats-grid">
+            <div class="mini-result">
+              <span class="mini-label">Mục tiêu doanh thu / ngày</span>
+              <strong id="resRevenuePerDay">696.552 đ</strong>
+            </div>
+            <div class="mini-result">
+              <span class="mini-label">Tổng khách cần trong tháng</span>
+              <strong id="resCustomersPerMonth">119 khách</strong>
+            </div>
+            <div class="mini-result">
+              <span class="mini-label">Nếu đạt 6 khách/ngày (lãi/tháng)</span>
+              <strong class="text-success" id="resProfitAt6">+9.380.000 đ</strong>
+            </div>
+            <div class="mini-result">
+              <span class="mini-label">Nếu đạt 8 khách/ngày (lãi/tháng)</span>
+              <strong class="text-success" id="resProfitAt8">+19.240.000 đ</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Strategic Advice & Risk Management Section -->
+    <section class="advice-section">
+      <div class="advice-header">
+        <h2>💡 Nhận Xét & Lời Khuyên Tài Chính Cho Kế Hoạch 100 Triệu</h2>
+        <p>Phân tích từ chuyên gia tài chính để kế hoạch mở spa thành công bền vững</p>
+      </div>
+
+      <div class="advice-grid">
+        <div class="advice-card card-risk">
+          <div class="advice-title">
+            <span class="badge badge-danger">Rủi ro cần tránh</span>
+            <h3>Không để cạn vốn lưu động ở Tháng 1</h3>
+          </div>
+          <p>Kế hoạch hiện tại chi hết 119.2 triệu ngay tháng đầu tiên (vượt ngân sách 100tr). Spa mới mở thường mất 2-3 tháng đầu để có tệp khách quen. Nếu không giữ lại ít nhất <strong>25 - 30 triệu tiền mặt dự phòng</strong>, bạn sẽ gặp áp lực đứt dòng tiền chi trả mặt bằng và sinh hoạt ở tháng thứ 2 và 3.</p>
+        </div>
+
+        <div class="advice-card card-action">
+          <div class="advice-title">
+            <span class="badge badge-success">Giải pháp tối ưu</span>
+            <h3>Cơ cấu lại khoản 92 Triệu đầu tư</h3>
+          </div>
+          <p>Nên đàm phán giảm tiền sang mặt bằng (40tr), tối ưu chi phí sửa tiệm & trang trí (10tr) hoặc chỉ mua máy móc thực sự cần thiết ban đầu. Giữ lại ngân sách chuyển sang mục <strong>"Quỹ bù lỗ 3 tháng đầu"</strong> để tâm lý làm nghề luôn vững vàng.</p>
+        </div>
+
+        <div class="advice-card card-growth">
+          <div class="advice-title">
+            <span class="badge badge-info">Chiến lược sau cưới</span>
+            <h3>Lợi thế giảm chi phí sinh hoạt</h3>
+          </div>
+          <p>Sau cưới, việc giảm 4 triệu tiền trọ giúp điểm hòa vốn giảm từ <strong>696k xuống còn 558k/ngày</strong>. Đây là lúc tiệm bắt đầu tích lũy lợi nhuận ròng tốt nhất để hoàn trả khoản 20tr tiền học nghề và khấu hao trang thiết bị.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="footer-container">
+      <p>© 2026 P-SPA Management • Dữ liệu đồng bộ từ <code>Bang_ke_hoach_chi_spa_100tr.xlsx</code></p>
+      <div class="footer-links">
+        <a href="Bang_ke_hoach_chi_spa_100tr.md" target="_blank">Xem Tài Liệu Markdown</a>
+        <a href="#simulatorSection">Công Cụ Giả Lập</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script logic -->
+  <script src="app.js"></script>
+</body>
+</html>
